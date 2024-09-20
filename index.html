@@ -31,24 +31,36 @@
 
     <script>
         function checkIPAndRedirect() {
-            fetch('https://ipapi.co/json/')
-                .then(response => response.json())
-                .then(data => {
-                    const messageElement = document.getElementById('message');
+            fetch('https://myip.ipip.net', {
+                headers: {
+                    'Accept': 'application/json'
+                }
+            })
+            .then(response => response.text())
+            .then(data => {
+                const messageElement = document.getElementById('message');
+                
+                // 解析返回的文本数据
+                const match = data.match(/来自于：(.*)/);
+                if (match) {
+                    const location = match[1];
                     
-                    if (data.country_code === "CN") {
+                    if (location.includes('中国')) {
                         messageElement.textContent = "检测到您来自中国大陆";
                         setTimeout(() => {
                             window.location.href = "https://baidu.com";
                         }, 3000);
                     } else {
-                        messageElement.textContent = `检测到您的IP来自${data.country_name}。`;
+                        messageElement.textContent = `检测到您的IP来自${location}。`;
                     }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    document.getElementById('message').textContent = "检测IP时发生错误，请刷新再试。";
-                });
+                } else {
+                    throw new Error('无法解析位置信息');
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('message').textContent = "检测IP时发生错误，请刷新再试。";
+            });
         }
 
         window.onload = checkIPAndRedirect;
