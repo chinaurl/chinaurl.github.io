@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IP检测</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        #container {
+            text-align: center;
+            padding: 20px;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <div id="container">
+        <h1>正在检测您的IP地址...</h1>
+        <p id="message"></p>
+    </div>
+
+    <script>
+        function checkIPAndRedirect() {
+            fetch('https://ipapi.co/json/')
+                .then(response => response.json())
+                .then(data => {
+                    const messageElement = document.getElementById('message');
+                    
+                    if (data.country_code === "CN") {
+                        messageElement.textContent = "检测到您来自中国大陆";
+                        setTimeout(() => {
+                            window.location.href = "https://xxx.com";
+                        }, 3000);
+                    } else {
+                        messageElement.textContent = `检测到您的IP来自${data.country_name}。`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('message').textContent = "检测IP时发生错误，请刷新再试。";
+                });
+        }
+
+        window.onload = checkIPAndRedirect;
+    </script>
+</body>
+</html>
