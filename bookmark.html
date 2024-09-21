@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>添加书签</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        h1 {
+            color: #4CAF50;
+        }
+        .instructions {
+            background-color: #f0f0f0;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 20px;
+        }
+        .shortcut {
+            font-weight: bold;
+            color: #4CAF50;
+        }
+    </style>
+    <script>
+    window.onload = function() {
+        var urlParams = new URLSearchParams(window.location.search);
+        var url = urlParams.get('url');
+        var title = urlParams.get('title');
+        
+        if (url && title) {
+            document.title = decodeURIComponent(title);
+            history.replaceState(null, '', decodeURIComponent(url));
+        }
+
+        var shortcutEl = document.getElementById('shortcut');
+        if (navigator.userAgent.toLowerCase().indexOf('mac') != -1) {
+            shortcutEl.textContent = 'Command+D';
+        } else {
+            shortcutEl.textContent = 'Ctrl+D';
+        }
+    }
+    </script>
+</head>
+<body>
+    <h1>请将此页面添加到书签</h1>
+    <p>您即将收藏的网址是：</p>
+    <p><strong id="bookmarkUrl"></strong></p>
+    <div class="instructions">
+        <p>请使用浏览器的书签功能添加此页面。</p>
+        <p>在大多数浏览器中，您可以按 <span id="shortcut" class="shortcut">Ctrl+D</span> 来添加书签。</p>
+    </div>
+    <script>
+        document.getElementById('bookmarkUrl').textContent = window.location.href;
+    </script>
+</body>
+</html>
