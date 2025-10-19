@@ -20,9 +20,13 @@
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             text-align: center;
+            min-width: 300px;
         }
         #info h1 {
             margin-top: 0;
+        }
+        #info p {
+            word-wrap: break-word;
         }
     </style>
 </head>
@@ -34,34 +38,45 @@
     </div>
 
     <script>
-        // 当页面加载完成后执行
         document.addEventListener('DOMContentLoaded', function() {
-            // 使用 fetch API 请求 ip-api.com
-            // 这个 API 会返回发出请求的 IP 的地理位置信息
             fetch('https://ip-api.com/json/')
-                .then(response => response.json()) // 将响应解析为 JSON
+                .then(response => response.json())
                 .then(data => {
-                    // data 对象包含如: status, country, countryCode, city, ip 等
-                    
-                    // 检查国家代码是否为 'CN' (中国)
-                    if (data.countryCode === 'CN') {
-                        // 如果是中国内地 IP，则跳转
-                        document.getElementById('location-info').innerText = '您正在从中国访问，即将跳转...';
-                        window.location.href = 'https://wangzhi.icu';
+                    // 调试：在控制台打印 API 返回的完整数据
+                    console.log('IP API 响应:', data);
+
+                    // --- 新增：检查 API 响应状态 ---
+                    if (data.status === 'success') {
+                        // 状态成功
+                        if (data.countryCode === 'CN') {
+                            // 是中国内地 IP，跳转
+                            document.getElementById('location-info').innerText = '您正在从中国访问，即将跳转...';
+                            window.location.href = 'https://wangzhi.icu';
+                        } else {
+                            // 不是中国内地 IP，显示信息
+                            document.getElementById('info').innerHTML = `
+                                <h1>欢迎！</h1>
+                                <p>您的 IP 地址似乎不在中国内地。</p>
+                                <p><strong>IP:</strong> ${data.query}</p>
+                                <p><strong>位置:</strong> ${data.city || '未知城市'}, ${data.regionName || '未知地区'}, ${data.country || '未知国家'}</p>
+                            `;
+                            // (使用了 || '...' 来防止个别字段为空时也显示 undefined)
+                        }
                     } else {
-                        // 如果不是，则显示 IP 和地址信息
+                        // --- 新增：处理 API 返回的 "fail" 状态 ---
+                        // API 返回了失败信息，例如 "private range", "rate limit"
                         document.getElementById('info').innerHTML = `
-                            <h1>欢迎！</h1>
-                            <p>您的 IP 地址似乎不在中国内地。</p>
-                            <p><strong>IP:</strong> ${data.query}</p>
-                            <p><strong>位置:</strong> ${data.city}, ${data.regionName}, ${data.country}</p>
+                            <h1>IP 检测失败</h1>
+                            <p>无法获取您的地理位置信息。</p>
+                            <p><strong>失败原因:</strong> ${data.message || '未知错误'}</p>
+                            <p><strong>您的 IP:</strong> ${data.query || '未知'}</p>
                         `;
                     }
                 })
                 .catch(error => {
-                    // 处理 API 请求失败的情况
+                    // 处理 fetch 本身失败的情况（例如网络中断）
                     console.error('IP 地址检测失败:', error);
-                    document.getElementById('location-info').innerText = '无法检测您的 IP 地址信息。';
+                    document.getElementById('location-info').innerText = '无法连接到 IP 检测服务。';
                 });
         });
     </script>
