@@ -53,13 +53,13 @@
                     // 注意：这个 API 的字段是 'country'，不是 'countryCode'
                     if (data.country === 'CN') {
                         // 如果是中国内地 IP，则跳转
-                        document.getElementById('location-info').innerText = '您正在从中国访问，即将跳转...';
+                        document.getElementById('location-info').innerText = '您正在从内地访问，即将跳转...';
                         window.location.href = 'https://wangzhi.icu';
                     } else {
                         // 如果不是，则显示 IP 和国家信息
                         document.getElementById('info').innerHTML = `
                             <h1>欢迎！</h1>
-                            <p>您的 IP 地址似乎不在中国内地。</p>
+                            <p>您似乎不在中国内地</p>
                             <p><strong>IP:</strong> ${data.ip}</p>
                             <p><strong>国家代码:</strong> ${data.country}</p>
                         `;
@@ -67,10 +67,10 @@
                 })
                 .catch(error => {
                     // 处理 API 请求失败的情况
-                    console.error('IP 地址检测失败:', error);
+                    console.error('检测失败:', error);
                     document.getElementById('info').innerHTML = `
                         <h1>检测失败</h1>
-                        <p>无法连接到 IP 检测服务。</p>
+                        <p>无法连接到检测服务。</p>
                         <p>${error.message}</p>
                     `;
                 });
@@ -79,4 +79,5 @@
 
 </body>
 </html>
+
 
